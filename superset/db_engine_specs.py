@@ -637,6 +637,29 @@ class HiveEngineSpec(PrestoEngineSpec):
 
     engine = 'hive'
     cursor_execute_kwargs = {'async': True}
+    time_grains = (
+        Grain('Time Column', _('Time Column'), '{col}'),
+        Grain('second', _('second'),
+              "date_format(CAST({col} AS TIMESTAMP), 'YYYY-MM-dd HH:mm:ss')"),
+        Grain('minute', _('minute'),
+              "date_format(CAST({col} AS TIMESTAMP), 'YYYY-MM-dd HH:mm:00')"),
+        Grain('hour', _('hour'),
+              "date_format(CAST({col} AS TIMESTAMP), 'YYYY-MM-dd HH:00:00')"),
+        Grain('day', _('day'),
+              "date_format(CAST({col} AS TIMESTAMP), 'YYYY-MM-dd')"),
+        Grain('week', _('week'),
+              "date_format(CAST({col} AS TIMESTAMP), 'YYYY-ww')"),
+        Grain('month', _('month'),
+              "date_format(CAST({col} AS TIMESTAMP), 'YYYY-MM')"),
+        Grain('quarter', _('quarter'),
+              "quarter(CAST({col} AS TIMESTAMP))"),
+        Grain("week_ending_saturday", _('week_ending_saturday'),
+              "date_add('day', 5, trunc('week', date_add('day', 1, "
+              "CAST({col} AS TIMESTAMP))))"),
+        Grain("week_start_sunday", _('week_start_sunday'),
+              "date_add('day', -1, trunc('week', "
+              "date_add('day', 1, CAST({col} AS TIMESTAMP))))"),
+    )
 
     # Scoping regex at class level to avoid recompiling
     # 17/02/07 19:36:38 INFO ql.Driver: Total jobs = 5
